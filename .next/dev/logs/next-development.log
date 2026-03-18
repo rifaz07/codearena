@@ -1,0 +1,17 @@
+[00:00:03.070] Server  LOG     ✓ Ready in 2s
+[00:00:15.833] Server  LOG     ○ Compiling / ...
+[00:00:21.345] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:21.515] Browser WARN    Image with src "http://localhost:3000/vercel.svg" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:03:44.953] Server  ERROR   Error: ENOENT: no such file or directory, scandir 'C:\dev\Projects\Leetcode-Clone\codearena\app'
+[00:03:44.960] Server  ERROR   ⨯ "unhandledRejection:" Error: ENOENT: no such file or directory, scandir 'C:\dev\Projects\Leetcode-Clone\codearena\app'
+[00:03:44.965] Server  ERROR   ⨯ "unhandledRejection: " Error: ENOENT: no such file or directory, scandir 'C:\dev\Projects\Leetcode-Clone\codearena\app'
+[00:03:44.988] Server  ERROR   Error: ENOENT: no such file or directory, scandir 'C:\dev\Projects\Leetcode-Clone\codearena\app'
+[00:03:44.994] Server  ERROR   Error: ENOENT: no such file or directory, scandir 'C:\dev\Projects\Leetcode-Clone\codearena\app'
+[00:03:45.011] Server  ERROR   Error: ENOENT: no such file or directory, scandir 'C:\dev\Projects\Leetcode-Clone\codearena\app'
+[00:03:45.018] Server  ERROR   Error: ENOENT: no such file or directory, scandir 'C:\dev\Projects\Leetcode-Clone\codearena\app'
+[00:03:45.032] Server  ERROR   Error: ENOENT: no such file or directory, scandir 'C:\dev\Projects\Leetcode-Clone\codearena\app'
+[00:03:45.038] Server  ERROR   Error: ENOENT: no such file or directory, scandir 'C:\dev\Projects\Leetcode-Clone\codearena\app'
+[00:03:45.058] Server  ERROR   Error: ENOENT: no such file or directory, scandir 'C:\dev\Projects\Leetcode-Clone\codearena\app'
+[00:03:45.067] Server  ERROR   Error: ENOENT: no such file or directory, scandir 'C:\dev\Projects\Leetcode-Clone\codearena\app'
+[00:03:45.074] Server  ERROR   Error: ENOENT: no such file or directory, scandir 'C:\dev\Projects\Leetcode-Clone\codearena\app'
+[00:03:45.082] Server  ERROR   Error: ENOENT: no such file or directory, scandir 'C:\dev\Projects\Leetcode-Clone\codearena\app'

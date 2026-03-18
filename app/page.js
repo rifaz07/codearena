@@ -1,9 +1,12 @@
-import { UserButton } from '@clerk/nextjs'
+import { UserButton } from "@clerk/nextjs";
+import { onBoardUser } from "@/modules/auth/actions";
 
-export default function Home() {
+export default async function Home() {
+  await onBoardUser();
+
   return (
-    <div>
+    <div className="flex flex-col items-center justify-center h-screen">
       <UserButton />
     </div>
-  )
+  );
 }

@@ -12,45 +12,69 @@ enum UserRole {
   USER
 }
 
+model User {
+  id        String      @id  @default(uuid())
+  clerkId   String   @unique
+  email     String   @unique
+  role      UserRole @default(USER)
+  firstName String?
+  lastName  String?
+  imageUrl  String?
+
+  problems  Problem[]
+  solvedProblems  ProblemSolved[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([role])
+}
+
 enum Difficulty {
   EASY
   MEDIUM
   HARD
 }
 
-model User {
-  id        String     @id @default(uuid())
-  clerkId   String     @unique
-  email     String     @unique
-  role      UserRole   @default(USER)
-  firstName String?
-  lastName  String?
-  imageUrl  String?
-  problems  Problem[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-
-  @@index([role])
-}
 
 model Problem {
-  id                 String     @id @default(uuid())
-  title              String
-  description        String
-  difficulty         Difficulty
-  tags               String[]
-  userId             String
-  examples           Json
-  constraints        String
-  hints              String?
-  editorial          String?
-  testCases          Json
+  id          String       @id @default(uuid())
+  title       String
+  description String
+  difficulty  Difficulty   // EASY, MEDIUM, HARD
+  tags        String[]
+  userId      String       // Creator of the problem
+  examples    Json         // Language-specific examples
+  constraints String
+  hints       String?
+  editorial   String?
+
+  testCases          Json 
   codeSnippets       Json
-  referenceSolutions Json
-  createdAt          DateTime   @default(now())
-  updatedAt          DateTime   @updatedAt
+  referenceSolutions Json 
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  @@index([difficulty])
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  solvedBy  ProblemSolved[]
+
+@@index([difficulty])
+}
+
+model ProblemSolved {
+  id        String   @id @default(uuid())
+  userId    String  
+  problemId String   
+  createdAt DateTime @default(now())
+  
+ 
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+
+
+
+  @@unique([userId, problemId]) 
 }

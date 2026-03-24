@@ -4,6 +4,7 @@ import { currentUserRole, getCurrentUser } from "@/modules/auth/actions";
 import { UserRole } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { resolveMetadata } from "next/dist/lib/metadata/resolve-metadata";
 
 
 export async function POST(request) {
@@ -71,18 +72,19 @@ export async function POST(request) {
         expected_output: output,
       }));
 
+      
    
 
-      //Submit all test cases in one batch
+      // Step 2.3: Submit all test cases in one batch
       const submissionResults = await submitBatch(submissions);
 
-      //Extract tokens from response
+      // Step 2.4: Extract tokens from response
       const tokens = submissionResults.map((res) => res.token);
 
-      //Poll Judge0 until all submissions are done
+      // Step 2.5: Poll Judge0 until all submissions are done
       const results = await pollBatchResults(tokens);
 
-      //Validate that each test case passed (status.id === 3)
+      // Step 2.6: Validate that each test case passed (status.id === 3)
       for (let i = 0; i < results.length; i++) {
         const result = results[i];
         console.log(`Test case ${i + 1} details:`, {
@@ -112,7 +114,7 @@ export async function POST(request) {
       }
     }
 
-    //Save the problem in the database after all validations pass
+    // Step 3: Save the problem in the database after all validations pass
       const newProblem = await db.problem.create({
         data: {
           title,

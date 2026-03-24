@@ -1,5 +1,4 @@
 "use client";
-
 import { Editor } from "@monaco-editor/react";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -29,7 +28,7 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
@@ -488,7 +487,7 @@ const CodeEditor = ({ value, onChange, language = "javascript" }) => {
 const CreateProblemForm = () => {
   const router = useRouter();
   const [sampleType, setSampleType] = useState("DP");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsloading] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(problemSchema),
@@ -518,7 +517,6 @@ const CreateProblemForm = () => {
     control,
     handleSubmit,
     reset,
-    setValue,
     formState: { errors },
   } = form;
 
@@ -532,7 +530,7 @@ const CreateProblemForm = () => {
     name: "testCases",
   });
 
-  const {
+   const {
     fields: tagFields,
     append: appendTag,
     remove: removeTag,
@@ -542,36 +540,35 @@ const CreateProblemForm = () => {
     name: "tags",
   });
 
-  const onSubmit = async (values) => {
+  const onSubmit = async(values)=>{
     try {
-      setIsLoading(true);
-      console.log("Form values:", values);
-      // Add your API call here
-      const response = await fetch("/api/create-problem", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
-      console.log("API response:", response);
-      toast.success(response.message || "Problem created successfully");
-      router.push("/problems");
+        setIsloading(true)
+        const response = await fetch("/api/create-problem",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify(values)
+        })
+        toast.success(response.message || "Problem created successfully")
+        router.push("/problems")
     } catch (error) {
-      console.error("Error creating problem:", error);
+          console.error("Error creating problem:", error);
       toast.error(error.message || "Failed to create problem");
-    } finally {
-      setIsLoading(false);
     }
-  };
+    finally{
+         setIsloading(false);
+    }
+  }
 
-  const loadSampleData = () => {
+   const loadSampleData = () => {
     const sampleData = sampleType === "DP" ? sampledpData : sampleStringProblem;
     replaceTags(sampleData.tags.map((tag) => tag));
     replaceTestCases(sampleData.testCases.map((tc) => tc));
     reset(sampleData);
   };
 
+
   return (
-    <div className="container mx-auto py-8 px-4 max-w-7xl">
+      <div className="container mx-auto py-8 px-4 max-w-7xl">
       <Card className="shadow-xl">
         <CardHeader className="pb-6">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -1011,7 +1008,7 @@ const CreateProblemForm = () => {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 };
 
 export default CreateProblemForm;

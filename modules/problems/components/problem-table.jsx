@@ -11,7 +11,13 @@ import {
   Search,
   Filter,
 } from "lucide-react";
-
+import AddToPlaylistModal from "./add-to-playlist";
+import CreatePlaylistModal from "./create-playlist";
+import {
+  createPlaylist,
+  deleteProblem,
+  addProblemToPlaylist,
+} from "../actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -33,7 +39,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { deleteProblem } from "../actions";
 
 const ProblemsTable = ({ problems, user }) => {
   const [search, setSearch] = useState("");
@@ -45,17 +50,19 @@ const ProblemsTable = ({ problems, user }) => {
     useState(false);
   const [selectedProblemId, setSelectedProblemId] = useState(null);
 
-
-    const allTags = useMemo(() => {
+  // Extract all unique tags from problems
+  const allTags = useMemo(() => {
     if (!Array.isArray(problems)) return [];
     const tagsSet = new Set();
     problems.forEach((p) => p.tags?.forEach((t) => tagsSet.add(t)));
     return Array.from(tagsSet);
   }, [problems]);
 
-    const difficulties = ["EASY", "MEDIUM", "HARD"];
+  // Define allowed difficulties
+  const difficulties = ["EASY", "MEDIUM", "HARD"];
 
-     const filteredProblems = useMemo(() => {
+  // Filter problems based on search, difficulty, and tags
+  const filteredProblems = useMemo(() => {
     return (problems || [])
       .filter((problem) =>
         problem.title.toLowerCase().includes(search.toLowerCase())
@@ -68,7 +75,7 @@ const ProblemsTable = ({ problems, user }) => {
       );
   }, [problems, search, difficulty, selectedTag]);
 
-
+  // Pagination logic
   const itemsPerPage = 5;
   const totalPages = Math.ceil(filteredProblems.length / itemsPerPage);
   const paginatedProblems = useMemo(() => {
@@ -78,19 +85,63 @@ const ProblemsTable = ({ problems, user }) => {
     );
   }, [filteredProblems, currentPage]);
 
-
-  const handleDelete = async(id)=>{
+  const handleDelete = async (id) => {
     const result = await deleteProblem(id);
-    if(result.success){
-        toast.success(result.message)
+    if (result.success) {
+      toast.success(result.message);
+    } else {
+      toast.error(result.error);
     }
-    else{
-        toast.error(result.error)
+  };
+
+  const handleCreatePlaylist = async (data) => {
+    try {
+      const response = await fetch("/api/playlists", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: data.name,
+          description: data.description,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setIsCreateModalOpen(false);
+        toast.success("Playlist created successfully");
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (error) {
+      console.error("Error creating playlist:", error);
+      toast.error(error.message || "Failed to create playlist");
     }
-  }
+  };
 
+  const handleAddToPlaylist = async (problemId, playlistId) => {
+    try {
+      const response = await fetch("/api/playlists/add-problem", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ problemId, playlistId }),
+      });
 
-    const getDifficultyVariant = (difficulty) => {
+      const result = await response.json();
+
+      if (result.success) {
+        setIsAddToPlaylistModalOpen(false);
+        toast.success("Problem added to playlist");
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (error) {
+      console.error("Error adding to playlist:", error);
+      toast.error(error.message || "Failed to add problem to playlist");
+    }
+  };
+
+  const getDifficultyVariant = (difficulty) => {
     switch (difficulty) {
       case "EASY":
         return "default";
@@ -103,8 +154,7 @@ const ProblemsTable = ({ problems, user }) => {
     }
   };
 
-
-    const getDifficultyColor = (difficulty) => {
+  const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
       case "EASY":
         return "bg-green-100 text-green-800 hover:bg-green-100";
@@ -118,7 +168,7 @@ const ProblemsTable = ({ problems, user }) => {
   };
 
   return (
-     <div className="w-full max-w-7xl mx-auto space-y-8 p-6">
+    <div className="w-full max-w-7xl mx-auto space-y-8 p-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -329,9 +379,21 @@ const ProblemsTable = ({ problems, user }) => {
         </div>
       )}
 
-      
+      {/* Modals */}
+      <CreatePlaylistModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSubmit={handleCreatePlaylist}
+      />
+
+      <AddToPlaylistModal
+        isOpen={isAddToPlaylistModalOpen}
+        onClose={() => setIsAddToPlaylistModalOpen(false)}
+        onSubmit={handleAddToPlaylist}
+        problemId={selectedProblemId}
+      />
     </div>
-  )
+  );
 };
 
 export default ProblemsTable;

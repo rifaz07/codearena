@@ -67,8 +67,8 @@ export async function POST(request) {
       const languageId = getJudge0LanguageId(language);
 
       if (!languageId) {
-        console.warn(`⚠️ Unsupported language skipped: ${language}`);
-        continue; // skip instead of breaking
+        console.warn(`Unsupported language skipped: ${language}`);
+        continue;
       }
 
       const submissions = testCases.map(({ input, output }) => ({
@@ -102,7 +102,7 @@ export async function POST(request) {
 
           
           if (result.status.id !== 3) {
-            console.warn("❌ Validation failed", {
+            console.warn("Validation failed", {
               language,
               testCase: submissions[i],
               result,
@@ -110,7 +110,7 @@ export async function POST(request) {
           }
         }
       } catch (judgeError) {
-        console.error("⚠️ Judge0 error (ignored):", judgeError);
+        console.error("Judge0 error (ignored):", judgeError);
       }
     }
 

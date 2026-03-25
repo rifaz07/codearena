@@ -63,7 +63,9 @@ export const SubmissionHistory = ({ submissions = [] }) => {
                 <CardContent className="pt-4 pb-4">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      {submission.status === "Accepted" ? (
+
+
+                      {/* {submission.status === "Accepted" ? (
                         <Badge className="bg-green-500/10 text-green-500 hover:bg-green-500/20">
                           <CheckCircle2 className="mr-1 h-3 w-3" />
                           Accepted
@@ -73,7 +75,20 @@ export const SubmissionHistory = ({ submissions = [] }) => {
                           <XCircle className="mr-1 h-3 w-3" />
                           Failed
                         </Badge>
-                      )}
+                      )} */}
+                      {submission.status === "Accepted" ? (
+  <Badge className="bg-green-500/10 text-green-500 hover:bg-green-500/20">
+    <CheckCircle2 className="mr-1 h-3 w-3" />
+    Accepted
+  </Badge>
+) : (
+  <Badge className="bg-red-500/10 text-red-500 hover:bg-red-500/20">
+    <XCircle className="mr-1 h-3 w-3" />
+    {submission.status}
+  </Badge>
+)}
+
+
                     </div>
                     <div className="flex items-center gap-1 text-sm text-muted-foreground">
                       <Calendar className="h-3 w-3" />

@@ -93,7 +93,7 @@ export async function POST(request) {
             result.compile_output ??
             null;
 
-          console.log(`🧪 Test case ${i + 1} (${language})`, {
+          console.log(`Test case ${i + 1} (${language})`, {
             input: submissions[i].stdin,
             expected: submissions[i].expected_output,
             actual: actualOutput,

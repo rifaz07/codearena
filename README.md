@@ -1,47 +1,174 @@
+
+
 # CodeArena 🏆
 
-CodeArena is a full-stack LeetCode-inspired coding practice platform built with Next.js 15, PostgreSQL, and Judge0.
-It allows developers to solve coding problems in JavaScript, Python, and Java with real-time code execution,
-instant test case feedback, submission history tracking, and custom problem playlists —
-all secured with GitHub OAuth authentication and role-based access control.
+> A production-ready, full-stack coding practice platform — inspired by LeetCode — built with modern web technologies.
+
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-blue?logo=postgresql)](https://neon.tech/)
+[![Prisma](https://img.shields.io/badge/Prisma-5-indigo?logo=prisma)](https://prisma.io/)
+[![Clerk](https://img.shields.io/badge/Auth-Clerk-purple?logo=clerk)](https://clerk.com/)
+[![Vercel](https://img.shields.io/badge/Deployed-Vercel-black?logo=vercel)](https://vercel.com/)
 
 ---
 
-## 🚀 Live Demo
+## 🔗 Live Demo
 
-> Coming soon after deployment
+**[https://codearena-e6et-nk01llxcq-rifaz-shaikh-razaks-projects.vercel.app](https://codearena-e6et-nk01llxcq-rifaz-shaikh-razaks-projects.vercel.app)**
+
+> Sign in with GitHub to start solving problems instantly.
 
 ---
 
-## 📸 Features
+## 📸 What is CodeArena?
 
-- 🔐 **GitHub OAuth Authentication** via Clerk
-- 👤 **Role-based Access Control** (Admin / User)
-- 📝 **Problem Creation** with Judge0 validation (Admin only)
-- 💻 **Online Code Editor** powered by Monaco Editor
-- ⚡ **Real-time Code Execution** via Judge0 API
-- 📊 **Submission History** with memory and time stats
-- 📋 **Custom Playlists** to organize problems
-- 👤 **User Profile** with stats and solved problems
-- 🌙 **Dark / Light Mode**
+CodeArena is a **full-stack coding judge platform** where developers can:
+
+- Solve algorithmic problems with a VS Code-like editor
+- Execute code in real-time using Judge0 engine
+- Track submission history with memory and time stats
+- Organize problems into custom playlists
+- View their coding progress on a personal profile
+
+Built as a portfolio project to demonstrate full-stack engineering skills including **backend API design, database modeling, authentication, third-party API integration, and cloud deployment.**
+## 📸 What is CodeArena?
+
+![Home](./assets/home.png)
+
+![Problems](./assets/problems.png)
+
+![Problem](./assets/problem.png)
+
+![Profile](./assets/profile.png)
+
+![Profile Details](./assets/profile1.png)
+
+![Playlist](./assets/playlist.png)
+
+---
+
+## ✨ Features
+
+| Feature | Description |
+|---|---|
+| 🔐 GitHub OAuth | One-click login via Clerk |
+| 👤 Role-based Access | Admin creates problems, Users solve them |
+| 💻 Monaco Editor | VS Code-powered code editor in the browser |
+| ⚡ Real-time Execution | Code runs via Judge0 against all test cases |
+| 📊 Submission History | Track every submission with memory & time stats |
+| 📋 Custom Playlists | Organize and save problems into collections |
+| 👤 Profile Dashboard | View solved problems, stats, and playlists |
+| 🌙 Dark / Light Mode | Full theme support |
+| 🛡️ Admin Panel | Create and manage problems with validation |
 
 ---
 
 ## 🛠️ Tech Stack
 
+### Frontend
 | Technology | Purpose |
 |---|---|
-| Next.js 15 (App Router) | Full-stack React framework |
-| PostgreSQL | Relational database |
-| Prisma 5 | Type-safe ORM |
-| Docker | Database containerization |
-| Clerk | Authentication & GitHub OAuth |
-| Judge0 CE | Code execution engine |
-| Monaco Editor | VS Code-like code editor |
-| shadcn/ui | UI component library |
-| Tailwind CSS | Utility-first styling |
-| React Hook Form + Zod | Form management & validation |
-| Axios | HTTP requests |
+| Next.js 15 (App Router) | Full-stack React framework with SSR |
+| Tailwind CSS | Utility-first CSS framework |
+| shadcn/ui | Accessible, reusable UI components |
+| Monaco Editor | VS Code editor in the browser |
+| React Hook Form + Zod | Form state management & validation |
+| next-themes | Dark/Light mode support |
+
+### Backend
+| Technology | Purpose |
+|---|---|
+| Next.js API Routes | RESTful backend endpoints |
+| Prisma 5 | Type-safe ORM for database operations |
+| PostgreSQL (Neon) | Cloud-hosted relational database |
+| Clerk | Authentication & session management |
+| Judge0 CE | Sandboxed code execution engine |
+| Axios | HTTP client for Judge0 API calls |
+
+### DevOps
+| Technology | Purpose |
+|---|---|
+| Vercel | Cloud deployment & CI/CD |
+| Neon DB | Serverless PostgreSQL in the cloud |
+| Docker | Local PostgreSQL containerization |
+| Git Flow | Feature branch workflow |
+
+---
+
+## 🏗️ System Architecture
+
+```
+┌─────────────────────────────────────────────────────┐
+│                    User Browser                      │
+└────────────────────────┬────────────────────────────┘
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────┐
+│                 Vercel (Next.js 15)                  │
+│                                                      │
+│  ┌─────────────┐  ┌──────────────┐  ┌────────────┐ │
+│  │   Pages     │  │  API Routes  │  │  Middleware │ │
+│  │ (App Router)│  │   /api/*     │  │  (Clerk)   │ │
+│  └─────────────┘  └──────────────┘  └────────────┘ │
+└──────┬──────────────────┬───────────────────────────┘
+       │                  │
+       ▼                  ▼
+┌──────────────┐  ┌───────────────┐  ┌──────────────┐
+│   Clerk      │  │   Neon DB     │  │   Judge0 CE  │
+│   (Auth)     │  │  (PostgreSQL) │  │  (Code Exec) │
+└──────────────┘  └───────────────┘  └──────────────┘
+```
+
+---
+
+## 🔄 Code Execution Flow
+
+```
+User submits code
+       ↓
+Next.js API Route validates request
+       ↓
+Gets Judge0 language ID
+       ↓
+Sends code + test cases as batch to Judge0
+       ↓
+Receives tokens (one per test case)
+       ↓
+Polls Judge0 every 1s until complete
+       ↓
+status.id === 3 → Accepted ✅
+status.id === 4 → Wrong Answer ❌
+status.id === 5 → Time Limit Exceeded ⏰
+status.id === 6 → Compilation Error 💥
+       ↓
+Saves submission to PostgreSQL via Prisma
+       ↓
+Returns results to user
+```
+
+---
+
+## 🗄️ Database Schema
+
+```
+User ──────────────────────────────────────┐
+ ├── problems[]      (created by admin)     │
+ ├── submissions[]   (code submissions)     │
+ ├── solvedProblems[] (solved tracking)     │
+ └── playlists[]     (custom collections)  │
+                                           │
+Problem ────────────────────────────────── │
+ ├── user            (creator)  ←──────────┘
+ ├── submissions[]
+ ├── solvedBy[]
+ └── problemsPlaylists[]
+
+Submission
+ └── testCases[]     (per test case results)
+
+Playlist
+ └── problems[]      (ProblemInPlaylist)
+```
 
 ---
 
@@ -50,25 +177,25 @@ all secured with GitHub OAuth authentication and role-based access control.
 ```
 codearena/
 ├── app/
-│   ├── (auth)/                  # Sign-in, Sign-up pages
-│   ├── (root)/                  # Protected pages
+│   ├── (auth)/                  # Auth pages (sign-in, sign-up)
+│   ├── (root)/                  # Protected app pages
 │   │   ├── about/               # About page
-│   │   ├── problems/            # Problems list page
-│   │   └── profile/             # User profile page
+│   │   ├── problems/            # Problems list
+│   │   └── profile/             # User profile
 │   ├── api/
-│   │   ├── create-problem/      # Create problem API
-│   │   └── playlists/           # Playlist APIs
-│   ├── create-problem/          # Create problem page (Admin)
-│   └── problem/[id]/            # Problem solving page
+│   │   ├── create-problem/      # Problem creation API
+│   │   └── playlists/           # Playlist management API
+│   ├── create-problem/          # Admin problem creation page
+│   └── problem/[id]/            # Dynamic problem solving page
 ├── components/
 │   ├── providers/               # Theme provider
-│   └── ui/                      # shadcn components
+│   └── ui/                      # shadcn/ui components
 ├── lib/
-│   ├── db.js                    # Prisma client
-│   └── judge0.js                # Judge0 helper functions
+│   ├── db.js                    # Prisma client singleton
+│   └── judge0.js                # Judge0 API helpers
 ├── modules/
 │   ├── auth/actions/            # Auth server actions
-│   ├── home/components/         # Navbar
+│   ├── home/components/         # Navbar component
 │   ├── problems/
 │   │   ├── actions/             # Problem server actions
 │   │   └── components/          # Problem UI components
@@ -81,30 +208,7 @@ codearena/
 
 ---
 
-## 🗄️ Database Schema
-
-```
-User
- ├── problems (Problem[])
- ├── submissions (Submission[])
- ├── solvedProblems (ProblemSolved[])
- └── playlists (Playlist[])
-
-Problem
- ├── submissions (Submission[])
- ├── solvedBy (ProblemSolved[])
- └── problemsPlaylists (ProblemInPlaylist[])
-
-Submission
- └── testCases (TestCaseResult[])
-
-Playlist
- └── problems (ProblemInPlaylist[])
-```
-
----
-
-## ⚙️ Getting Started
+## ⚙️ Getting Started Locally
 
 ### Prerequisites
 
@@ -128,8 +232,13 @@ npm install
 **3. Set up environment variables**
 
 Create a `.env` file in the root:
+
 ```env
+# Local development (Docker PostgreSQL)
 DATABASE_URL="postgresql://postgres:postgres123@localhost:5433/codearena?schema=public"
+
+# For production use Neon DB URL:
+# DATABASE_URL="postgresql://user:pass@ep-xxx.neon.tech/neondb?sslmode=require"
 
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
 CLERK_SECRET_KEY=your_clerk_secret_key
@@ -154,9 +263,23 @@ npx prisma migrate dev
 npm run dev
 ```
 
-This will start Docker (PostgreSQL) and Next.js together.
+> This starts Docker (PostgreSQL) + Next.js together via the dev script.
 
 Visit `http://localhost:3000` 🎉
+
+---
+
+## 🚀 Deployment
+
+This project is deployed on **Vercel** with **Neon DB** as the cloud PostgreSQL database.
+
+### Deploy your own:
+1. Fork this repository
+2. Create a [Neon DB](https://neon.tech) project and copy the connection string
+3. Create a [Clerk](https://clerk.com) application with GitHub OAuth
+4. Import the repo on [Vercel](https://vercel.com)
+5. Add all environment variables in Vercel settings
+6. Run `npx prisma migrate deploy` against your Neon DB
 
 ---
 
@@ -177,48 +300,25 @@ Visit `http://localhost:3000` 🎉
 
 ---
 
-## 🔄 How Code Execution Works
-
-```
-User submits code
-      ↓
-Next.js API route receives request
-      ↓
-For each language (JS, Python, Java):
-  - Send code + test cases to Judge0 (batch)
-  - Get tokens back
-  - Poll until execution complete
-  - Check if all test cases passed (status.id === 3)
-      ↓
-Save submission to database
-      ↓
-Return results to user
-```
-
-**Judge0 Status Codes:**
-- `1` → In Queue
-- `2` → Processing
-- `3` → Accepted ✅
-- `4` → Wrong Answer ❌
-- `5` → Time Limit Exceeded
-- `6` → Compilation Error
-
----
-
 ## 👥 User Roles
 
 | Role | Permissions |
 |---|---|
-| `USER` | Browse problems, submit solutions, create playlists, view profile |
-| `ADMIN` | Everything USER can do + create/manage problems |
+| `USER` | Browse problems, write & submit code, create playlists, view profile |
+| `ADMIN` | Everything USER can do + create problems with Judge0 validation |
+
+> To set a user as ADMIN, run this SQL in your database:
+> ```sql
+> UPDATE "User" SET role = 'ADMIN' WHERE email = 'your@email.com';
+> ```
 
 ---
 
 ## 📝 Git Flow
 
 ```
-main
-└── dev
+main (production)
+└── dev (integration)
     ├── feature/project-setup
     ├── feature/database-setup
     ├── feature/auth-clerk
@@ -248,7 +348,8 @@ main
   "zod": "^4.3.6",
   "axios": "^1.13.6",
   "sonner": "^2.0.7",
-  "next-themes": "^0.4.6"
+  "next-themes": "^0.4.6",
+  "tailwindcss": "^4"
 }
 ```
 
@@ -256,11 +357,12 @@ main
 
 ## 🙏 Acknowledgements
 
-- [Apna College](https://www.apnacollege.in/) — Course curriculum
-- [Judge0](https://judge0.com/) — Code execution engine
-- [Clerk](https://clerk.com/) — Authentication
-- [shadcn/ui](https://ui.shadcn.com/) — UI components
-- [Monaco Editor](https://microsoft.github.io/monaco-editor/) — Code editor
+- [Apna College](https://www.apnacollege.in/) — Course curriculum by Suraj
+- [Judge0](https://judge0.com/) — Open source code execution engine
+- [Clerk](https://clerk.com/) — Authentication infrastructure
+- [shadcn/ui](https://ui.shadcn.com/) — Beautiful UI components
+- [Monaco Editor](https://microsoft.github.io/monaco-editor/) — The editor that powers VS Code
+- [Neon](https://neon.tech/) — Serverless PostgreSQL
 
 ---
 
@@ -269,7 +371,9 @@ main
 **Rifaz Shaikh**
 - GitHub: [@rifaz07](https://github.com/rifaz07)
 - Project: [CodeArena](https://github.com/rifaz07/codearena)
+- Live: [codearena.vercel.app](https://codearena-e6et-nk01llxcq-rifaz-shaikh-razaks-projects.vercel.app)
 
 ---
 
-⭐ If you found this project helpful, please give it a star on GitHub!
+⭐ **If you found this project helpful, please give it a star on GitHub!**
+

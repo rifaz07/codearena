@@ -14,7 +14,7 @@
 
 ## 🔗 Live Demo
 
-**[https://codearena-e6et-nk01llxcq-rifaz-shaikh-razaks-projects.vercel.app](https://codearena-e6et-nk01llxcq-rifaz-shaikh-razaks-projects.vercel.app)**
+**[https://codearena-e6et.vercel.app/]**
 
 > Sign in with GitHub to start solving problems instantly.
 

@@ -1,4 +1,6 @@
 
+
+export const dynamic = 'force-dynamic'
 import { SubmissionHistory } from '@/modules/problems/components/submission-history';
 import { getCurrentUserData } from '@/modules/profile/actions'
 import PlaylistsSection from '@/modules/profile/components/playlist-section';

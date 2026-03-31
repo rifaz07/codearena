@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { db } from '@/lib/db';
 import { getAllProblems } from '@/modules/problems/actions';
 import ProblemsTable from '@/modules/problems/components/problem-table';

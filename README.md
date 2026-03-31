@@ -357,7 +357,6 @@ main (production)
 
 ## 🙏 Acknowledgements
 
-- [Apna College](https://www.apnacollege.in/) — Course curriculum by Suraj
 - [Judge0](https://judge0.com/) — Open source code execution engine
 - [Clerk](https://clerk.com/) — Authentication infrastructure
 - [shadcn/ui](https://ui.shadcn.com/) — Beautiful UI components

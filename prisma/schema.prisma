@@ -85,6 +85,7 @@ model Problem {
   tags        String[]
   userId      String
 
+  companies    Company[]
   primaryTag   PrimaryTag @default(Array)
   expectedTime Int        @default(1500)
 

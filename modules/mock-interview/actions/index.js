@@ -837,11 +837,21 @@ async function computeResult(session, userId) {
   const q1Ratio = yourTime > 0 ? q1Time / yourTime : 0;
   const q2Ratio = yourTime > 0 ? q2Time / yourTime : 0;
 
+  const bothSolved =
+    q1?.status === MockQuestionStatus.SOLVED &&
+    q2?.status === MockQuestionStatus.SOLVED;
+
   let behaviorInsight;
 
   if (session.status === MockSessionStatus.TIMED_OUT) {
     behaviorInsight =
       "You ran out of time. Practice solving each problem within 25 minutes. Speed is a skill.";
+  } else if (bothSolved && ratio <= 0.75) {
+    behaviorInsight =
+      "Both solved — and under expected time. Strong performance across the board.";
+  } else if (bothSolved) {
+    behaviorInsight =
+      "Both solved. Now work on speed — aim to finish both under expected time.";
   } else if (q1Ratio > 0.65 && q1?.status !== MockQuestionStatus.SOLVED) {
     behaviorInsight =
       "You spent over 65% of your time on Q1 and still didn't solve it. In real interviews, move on after 20 minutes.";

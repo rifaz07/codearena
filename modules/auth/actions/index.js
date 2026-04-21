@@ -32,57 +32,64 @@ export const onBoardUser = async () => {
     });
 
     return {
-        success:true,
-        user:newUser,
-        message:"User onBoarded Successfully"
-    }
+      success: true,
+      user: newUser,
+      message: "User onBoarded Successfully",
+    };
   } catch (error) {
-      console.error("❌ Error onboarding user:", error);
-        return { 
-            success: false, 
-            error: "Failed to onboard user" 
-        };
+    console.error("❌ Error onboarding user:", error);
+    return {
+      success: false,
+      error: "Failed to onboard user",
+    };
   }
 };
 
-
-export const currentUserRole = async ()=>{
+export const currentUserRole = async () => {
   try {
     const user = await currentUser();
+    if (!user) return null;
 
-      if (!user) {
-            return { success: false, error: "No authenticated user found" };
-        }
+    let userRole = await db.user.findUnique({
+      where: { clerkId: user.id },
+      select: { role: true },
+    });
 
-        const {id} = user;
+    if (!userRole) {
+      const { id, firstName, lastName, imageUrl, emailAddresses } = user;
+      const created = await db.user.upsert({
+        where: { clerkId: id },
+        update: {},
+        create: {
+          clerkId: id,
+          firstName: firstName || null,
+          lastName: lastName || null,
+          imageUrl: imageUrl || null,
+          email: emailAddresses[0]?.emailAddress || "",
+        },
+        select: { role: true },
+      });
+      userRole = created;
+    }
 
-        const userRole = await db.user.findUnique({
-          where:{
-            clerkId:id
-          },
-          select:{
-            role:true
-          }
-        })
     return userRole.role;
   } catch (error) {
-     console.error("❌ Error fetching user role:", error);
-        return { success: false, error: "Failed to fetch user role" };
+    console.error("❌ Error fetching user role:", error);
+    return null;
   }
-}
+};
 
-export const getCurrentUser = async()=>{
-  const user = await currentUser()
+export const getCurrentUser = async () => {
+  const user = await currentUser();
 
   const dbUser = await db.user.findUnique({
-    where:{
-      clerkId:user.id
+    where: {
+      clerkId: user.id,
     },
-    select:{
-      id:true
-    }
-  })
-
+    select: {
+      id: true,
+    },
+  });
 
   return dbUser;
-}
+};

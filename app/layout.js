@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "CodeArena",
-  description: "A LeetCode clone built with Next.js",
+  description: "CodeArena — practice coding problems and take mock interviews.",
 };
 
 export default function RootLayout({ children }) {

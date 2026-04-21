@@ -248,6 +248,7 @@ export default function InterviewRoomClient({
   }
 
   const q1Status = questions.find((q) => q.order === 1)?.status;
+  const q2Status = questions.find((q) => q.order === 2)?.status;
 
   return (
     <div className="min-h-screen mt-24 pb-8">
@@ -266,12 +267,12 @@ export default function InterviewRoomClient({
             <div className="flex items-center gap-2">
               <Badge
                 className={cn(
-                  currentOrder === 1
-                    ? "bg-amber-500 text-white"
-                    : q1Status === "SOLVED"
+                  q1Status === "SOLVED"
                     ? "bg-green-500 text-white"
                     : q1Status === "FAILED" || q1Status === "SKIPPED"
                     ? "bg-gray-400 text-white"
+                    : currentOrder === 1
+                    ? "bg-amber-500 text-white"
                     : "bg-gray-200 text-gray-700"
                 )}
               >
@@ -280,7 +281,11 @@ export default function InterviewRoomClient({
               <ChevronRight className="w-4 h-4 text-gray-400" />
               <Badge
                 className={cn(
-                  currentOrder === 2
+                  q2Status === "SOLVED"
+                    ? "bg-green-500 text-white"
+                    : q2Status === "FAILED" || q2Status === "SKIPPED"
+                    ? "bg-gray-400 text-white"
+                    : currentOrder === 2
                     ? "bg-amber-500 text-white"
                     : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
                 )}
@@ -307,7 +312,7 @@ export default function InterviewRoomClient({
           </div>
 
           {/* Right: editor + actions */}
-          <div className="flex flex-col gap-4 overflow-hidden">
+          <div className="flex flex-col gap-3 overflow-hidden">
             <Card className="flex flex-col flex-1 overflow-hidden">
               <CardHeader className="flex-shrink-0">
                 <div className="flex items-center justify-between">
@@ -333,7 +338,7 @@ export default function InterviewRoomClient({
                   </Select>
                 </div>
               </CardHeader>
-              <CardContent className="flex-1 flex flex-col gap-3 overflow-hidden">
+              <CardContent className="flex-1 flex flex-col overflow-hidden">
                 <div className="border rounded-lg overflow-hidden flex-1 min-h-[300px]">
                   <Editor
                     height="100%"
@@ -357,51 +362,53 @@ export default function InterviewRoomClient({
                     }}
                   />
                 </div>
-
-                {/* Actions */}
-                {!lastResult ? (
-                  <div className="flex gap-2">
-                    <Button
-                      onClick={handleSubmit}
-                      disabled={isSubmitting || isSkipping}
-                      className="flex-1 bg-amber-500 hover:bg-amber-600 dark:bg-amber-400 dark:hover:bg-amber-500 text-white dark:text-gray-900"
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Running tests...
-                        </>
-                      ) : (
-                        <>
-                          <Send className="w-4 h-4 mr-2" />
-                          Submit
-                        </>
-                      )}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => setShowSkipDialog(true)}
-                      disabled={isSubmitting || isSkipping}
-                    >
-                      <SkipForward className="w-4 h-4 mr-2" />
-                      Skip
-                    </Button>
-                  </div>
-                ) : (
-                  <Button
-                    onClick={handleContinue}
-                    className="w-full bg-amber-500 hover:bg-amber-600 dark:bg-amber-400 dark:hover:bg-amber-500 text-white dark:text-gray-900"
-                  >
-                    {lastResult.isLastQuestion
-                      ? "View Results"
-                      : "Continue to Q2"}
-                    <ChevronRight className="w-4 h-4 ml-2" />
-                  </Button>
-                )}
               </CardContent>
             </Card>
 
-            {/* Test results */}
+            {/* Action bar — outside editor card, always visible */}
+            <div className="flex-shrink-0">
+              {!lastResult ? (
+                <div className="flex gap-2">
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={isSubmitting || isSkipping}
+                    className="flex-1 bg-amber-500 hover:bg-amber-600 dark:bg-amber-400 dark:hover:bg-amber-500 text-white dark:text-gray-900"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Running tests...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4 mr-2" />
+                        Submit
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowSkipDialog(true)}
+                    disabled={isSubmitting || isSkipping}
+                  >
+                    <SkipForward className="w-4 h-4 mr-2" />
+                    Skip
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  onClick={handleContinue}
+                  className="w-full bg-amber-500 hover:bg-amber-600 dark:bg-amber-400 dark:hover:bg-amber-500 text-white dark:text-gray-900"
+                >
+                  {lastResult.isLastQuestion
+                    ? "View Results"
+                    : "Continue to Q2"}
+                  <ChevronRight className="w-4 h-4 ml-2" />
+                </Button>
+              )}
+            </div>
+
+            {/* Test results — below action bar */}
             {lastResult && (
               <Card className="flex-shrink-0">
                 <CardHeader className="py-3">

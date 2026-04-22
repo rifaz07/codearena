@@ -121,104 +121,119 @@ A complete timed interview simulator built on top of CodeArena.
 ---
 
 ## 🏗️ System Architecture
+
+```text
 ┌─────────────────────────────────────────────────────┐
 │                    User Browser                      │
 └────────────────────────┬────────────────────────────┘
-│
-▼
+                         │
+                         ▼
 ┌─────────────────────────────────────────────────────┐
 │                 Vercel (Next.js 16)                  │
 │                                                      │
-│  ┌─────────────┐  ┌──────────────┐  ┌────────────┐ │
-│  │   Pages     │  │Server Actions│  │  Middleware │ │
-│  │ (App Router)│  │  + API Route │  │  (Clerk)   │ │
-│  └─────────────┘  └──────────────┘  └────────────┘ │
+│  ┌─────────────┐  ┌──────────────┐  ┌────────────┐  │
+│  │   Pages     │  │Server Actions│  │ Middleware │  │
+│  │ (App Router)│  │  + API Route │  │  (Clerk)   │  │
+│  └─────────────┘  └──────────────┘  └────────────┘  │
 └──────┬──────────────────┬───────────────────────────┘
-│                  │
-▼                  ▼
+       │                  │
+       ▼                  ▼
 ┌──────────────┐  ┌───────────────┐  ┌──────────────┐
 │   Clerk      │  │   Neon DB     │  │   Judge0 CE  │
 │   (Auth)     │  │  (PostgreSQL) │  │  (Code Exec) │
 └──────────────┘  └───────────────┘  └──────────────┘
+```
 
 ---
 
 ## 🔄 Code Execution Flow
+
+```text
 User submits code
-↓
+       ↓
 Server Action validates request + session ownership
-↓
+       ↓
 Gets Judge0 language ID
-↓
+       ↓
 Sends code + test cases as batch to Judge0
-↓
+       ↓
 Receives tokens (one per test case)
-↓
+       ↓
 Polls Judge0 every 1s until complete
-↓
-status.id === 3 → Accepted ✅
-status.id === 4 → Wrong Answer ❌
-status.id === 5 → Time Limit Exceeded ⏰
-status.id === 6 → Compilation Error 💥
-↓
+       ↓
+status.id === 3 → Accepted
+status.id === 4 → Wrong Answer
+status.id === 5 → Time Limit Exceeded
+status.id === 6 → Compilation Error
+       ↓
 Saves submission in Prisma transaction
 (creates Submission + TestCaseResult + updates MockSessionQuestion)
-↓
+       ↓
 Returns results to user
+```
 
 ---
 
 ## 🗄️ Database Schema
-User ────────────────────────────────────────────┐
-├── problems[]        (created by admin)        │
-├── submissions[]     (code submissions)        │
-├── solvedProblems[]  (solved tracking)         │
-├── playlists[]       (custom collections)      │
-└── mockSessions[]    (mock interview history)  │
-│
-Problem ──────────────────────────────────────── │
-├── user              (creator)  ←──────────────┘
-├── submissions[]
-├── solvedBy[]
-├── problemsPlaylists[]
-├── mockQuestions[]   (appearances in mock interviews)
-├── companies[]       (GOOGLE | AMAZON | MICROSOFT)
-├── primaryTag        (Array | String | Tree | Graph | DP | ...)
-└── expectedTime      (seconds — for pace verdicts)
+
+```text
+User
+ ├── problems[]        (created by admin)
+ ├── submissions[]     (code submissions)
+ ├── solvedProblems[]  (solved tracking)
+ ├── playlists[]       (custom collections)
+ └── mockSessions[]    (mock interview history)
+
+Problem
+ ├── user              (creator)
+ ├── submissions[]
+ ├── solvedBy[]
+ ├── problemsPlaylists[]
+ ├── mockQuestions[]   (appearances in mock interviews)
+ ├── companies[]       (GOOGLE | AMAZON | MICROSOFT)
+ ├── primaryTag        (Array | String | Tree | Graph | DP | ...)
+ └── expectedTime      (seconds — for pace verdicts)
+
 MockSession
-├── userId
-├── company, difficulty, status (IN_PROGRESS | COMPLETED | TIMED_OUT)
-├── startTime, endTime, totalTime
-└── questions[]       (MockSessionQuestion)
+ ├── userId
+ ├── company, difficulty, status (IN_PROGRESS | COMPLETED | TIMED_OUT)
+ ├── startTime, endTime, totalTime
+ └── questions[]       (MockSessionQuestion)
+
 MockSessionQuestion
-├── sessionId, problemId, order (1 | 2)
-├── status            (PENDING | SOLVED | FAILED | SKIPPED)
-├── submissionId      (links to Submission)
-└── questionStartTime, questionEndTime, timeTaken
+ ├── sessionId, problemId, order (1 | 2)
+ ├── status            (PENDING | SOLVED | FAILED | SKIPPED)
+ ├── submissionId      (links to Submission)
+ └── questionStartTime, questionEndTime, timeTaken
+
 Submission
-└── testCases[]       (per test case results)
+ └── testCases[]       (per test case results)
+
 Playlist
-└── problems[]        (ProblemInPlaylist)
+ └── problems[]        (ProblemInPlaylist)
+```
 
 ---
 
 ## 📁 Project Structure
+
+```text
 codearena/
 ├── app/
 │   ├── (auth)/                          # Auth pages (sign-in, sign-up)
 │   ├── (root)/                          # Protected app pages
 │   │   ├── about/                       # About page
-│   │   ├── mock-interview/              # 🎤 Mock Interview feature
-│   │   │   ├── page.jsx                 #    Landing page
-│   │   │   ├── setup/                   #    Company + difficulty select
-│   │   │   └── [sessionId]/             #    Active interview room
+│   │   ├── mock-interview/              # Mock Interview feature
+│   │   │   ├── page.jsx                 #   Landing page
+│   │   │   ├── setup/                   #   Company + difficulty select
+│   │   │   └── [sessionId]/             #   Active interview room
 │   │   │       ├── page.jsx
-│   │   │       └── result/              #    Results breakdown
+│   │   │       └── result/              #   Results breakdown
 │   │   ├── problems/                    # Problems list
 │   │   └── profile/                     # User profile
 │   ├── api/
 │   │   ├── create-problem/              # Problem creation API
-│   │   ├── cron/cleanup-sessions/       # 🎤 Timed-out session cleanup
+│   │   ├── cron/cleanup-sessions/       # Timed-out session cleanup
 │   │   └── playlists/                   # Playlist management API
 │   ├── create-problem/                  # Admin problem creation page
 │   └── problem/[id]/                    # Dynamic problem solving page
@@ -231,9 +246,9 @@ codearena/
 ├── modules/
 │   ├── auth/actions/                    # Auth server actions
 │   ├── home/components/                 # Navbar component
-│   ├── mock-interview/                  # 🎤 Mock Interview module
-│   │   ├── actions/                     #    6 server actions (start, submit, skip, timeout, get, result)
-│   │   └── components/                  #    Room client, timer, panels, result cards
+│   ├── mock-interview/                  # Mock Interview module
+│   │   ├── actions/                     #   6 server actions
+│   │   └── components/                  #   Room, timer, result cards
 │   ├── problems/
 │   │   ├── actions/                     # Problem server actions
 │   │   └── components/                  # Problem UI components
@@ -241,9 +256,10 @@ codearena/
 │       ├── actions/                     # Profile server actions
 │       └── components/                  # Profile UI components
 └── prisma/
-├── schema.prisma                    # Database schema
-├── migrations/                      # DB migration history
-└── seed.mjs                         # 🎤 15-problem seed script
+    ├── schema.prisma                    # Database schema
+    ├── migrations/                      # DB migration history
+    └── seed.mjs                         # 15-problem seed script
+```
 
 ---
 
@@ -258,12 +274,14 @@ codearena/
 ### Installation
 
 **1. Clone the repository**
+
 ```bash
 git clone https://github.com/rifaz07/codearena.git
 cd codearena
 ```
 
 **2. Install dependencies**
+
 ```bash
 npm install
 ```
@@ -296,16 +314,19 @@ CRON_SECRET=your_strong_random_secret
 ```
 
 **4. Run database migrations**
+
 ```bash
 npx prisma migrate dev
 ```
 
 **5. Seed the database with 15 interview problems**
+
 ```bash
 npx prisma db seed
 ```
 
 **6. Start the development server**
+
 ```bash
 npm run dev
 ```
@@ -357,6 +378,7 @@ This project is deployed on **Vercel** with **Neon DB** as the cloud PostgreSQL 
 | `ADMIN` | Everything USER can do + create problems with Judge0 validation |
 
 > To set a user as ADMIN, run this SQL in your database:
+>
 > ```sql
 > UPDATE "User" SET role = 'ADMIN' WHERE email = 'your@email.com';
 > ```
@@ -364,31 +386,34 @@ This project is deployed on **Vercel** with **Neon DB** as the cloud PostgreSQL 
 ---
 
 ## 📝 Git Flow
+
+```text
 main (production)
 └── dev (integration)
-├── feature/project-setup
-├── feature/database-setup
-├── feature/auth-clerk
-├── feature/navbar-homepage
-├── feature/judge0-setup
-├── feature/create-problem
-├── feature/get-problems
-├── feature/problem-solving-page
-├── feature/submission-history-fetch
-├── feature/playlist-system
-├── feature/profile-page-ui
-├── feature/about-page
-│
-│── 🎤 Mock Interview (v1.1.0)
-├── feature/mock-interview-db          # Prisma schema
-├── feature/mock-interview-backend     # 6 server actions
-├── feature/mock-interview-security    # Cron + middleware
-├── feature/mock-interview-setup       # Setup page UI
-├── feature/mock-interview-room        # Interview room UI
-├── feature/mock-interview-results     # Results screen UI
-├── feature/mock-interview-seed        # 15 problem seed script
-├── feature/mock-interview-testing     # Full flow QA
-└── feature/mock-interview-polish      # Error states + bug fixes
+    ├── feature/project-setup
+    ├── feature/database-setup
+    ├── feature/auth-clerk
+    ├── feature/navbar-homepage
+    ├── feature/judge0-setup
+    ├── feature/create-problem
+    ├── feature/get-problems
+    ├── feature/problem-solving-page
+    ├── feature/submission-history-fetch
+    ├── feature/playlist-system
+    ├── feature/profile-page-ui
+    ├── feature/about-page
+    │
+    │── Mock Interview (v1.1.0)
+    ├── feature/mock-interview-db          # Prisma schema
+    ├── feature/mock-interview-backend     # 6 server actions
+    ├── feature/mock-interview-security    # Cron + middleware
+    ├── feature/mock-interview-setup       # Setup page UI
+    ├── feature/mock-interview-room        # Interview room UI
+    ├── feature/mock-interview-results     # Results screen UI
+    ├── feature/mock-interview-seed        # 15 problem seed script
+    ├── feature/mock-interview-testing     # Full flow QA
+    └── feature/mock-interview-polish      # Error states + bug fixes
+```
 
 ---
 
